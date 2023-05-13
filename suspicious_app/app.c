@@ -9,11 +9,14 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <stdbool.h>
+#include <string.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <unistd.h>
 #include <dirent.h>
+#include <sys/socket.h>
+#include <arpa/inet.h>
 
 /**
  * @brief Function should return true if suspicous activity 
@@ -113,8 +116,32 @@ static bool count_processes(void) {
 }
 REGISTER_ACTIVITY(count_processes);
 
+/**
+ * @brief Check connectivity to the internet using socket
+ *        (try to establish connection to 8.8.8.8:53)
+ * 
+ * @return true On success
+ * @return false On fail
+ */
 static bool access_network(void) {
-    return false;
+    int fd = socket(AF_INET, SOCK_STREAM, 0);
+    if (fd < 0) {
+        printf("Failed to create socket\n");
+        return false;
+    }
+
+    struct sockaddr_in serv_addr;
+    serv_addr.sin_family = AF_INET;
+	serv_addr.sin_port = htons(53);
+    inet_pton(AF_INET, "8.8.8.8", &serv_addr.sin_addr);
+
+    if (connect(fd, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0) {
+        printf("Failed to connect\n");
+        return false;
+    }
+
+    printf("Connected to server successfuly\n");
+    return true;
 }
 REGISTER_ACTIVITY(access_network);
 
