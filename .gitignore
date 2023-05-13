@@ -2,3 +2,4 @@
 app
 app_static
 *.out
+*.so
