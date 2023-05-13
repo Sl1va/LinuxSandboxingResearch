@@ -9,6 +9,10 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <stdbool.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <unistd.h>
 
 /**
  * @brief Function should return true if suspicous activity 
@@ -42,8 +46,41 @@ static void push_activity(const char *name, suspicious_act_func activity) {
  * Suspicious activities start
  **************************************************/ 
 
+/**
+ * @brief Try to read /etc/passwd,
+ *        print first several lines from the file
+ * 
+ * @return true On success
+ * @return false On fail
+ */
 static bool read_file(void) {
-    return false;
+    int fd = open("/etc/passwd", O_RDONLY);
+
+    if (fd == -1) {
+        printf("Failed to open /etc/passwd\n");
+        return false;
+    }
+    printf("Opened /etc/passwd\n");
+
+    char buf[512];
+    int r = read(fd, buf, sizeof(buf));
+
+    if (r == -1) {
+        printf("Failed to read from file descriptor\n");
+        return false;
+    }
+    // print only first line or full buffer if
+    // line consist of more than 512 symbols
+    buf[sizeof(buf) - 1] = '\0';
+    for (int i = 0; i < sizeof(buf) - 1; ++i) {
+        if (buf[i] == '\n') {
+            buf[i] = '\0';
+            break;
+        }
+    }
+
+    printf("First line of /etc/passwd:\n%s\n", buf);
+    return true;
 }
 REGISTER_ACTIVITY(read_file);
 
@@ -64,12 +101,12 @@ REGISTER_ACTIVITY(access_network);
 int main() {
     int success = 0;
     for (int i = 0; i < num_activities; ++i) {
-        printf("=== %s start ===\n", activities[i].name);
+        printf("=== %s start ===\n+\n", activities[i].name);
         if (activities[i].func()) {
             ++success;
-            printf("=== %s success ===\n\n", activities[i].name);
+            printf("+\n=== %s success ===\n\n", activities[i].name);
         } else
-            printf("=== %s fail ===\n\n", activities[i].name);
+            printf("+\n=== %s fail ===\n\n", activities[i].name);
     }
     printf("\nSummary: %d succeed, %d failed\n", success, (int) num_activities - success);
 }
