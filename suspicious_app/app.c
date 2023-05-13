@@ -13,6 +13,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <dirent.h>
 
 /**
  * @brief Function should return true if suspicous activity 
@@ -64,6 +65,7 @@ static bool read_file(void) {
 
     char buf[512];
     int r = read(fd, buf, sizeof(buf));
+    close(fd);
 
     if (r == -1) {
         printf("Failed to read from file descriptor\n");
@@ -84,10 +86,32 @@ static bool read_file(void) {
 }
 REGISTER_ACTIVITY(read_file);
 
-static bool list_processes(void) {
-    return false;
+/**
+ * @brief List /proc directory and count how many processes
+ *        are running at the moment
+ * 
+ * @return true On success
+ * @return false On fail
+ */
+static bool count_processes(void) {
+    DIR *dir = opendir("/proc");
+    if (!dir) {
+        printf("Failed to open /proc directory\n");
+        return false;
+    }
+
+    int64_t cnt = 0;
+    struct dirent *entry;
+    while ((entry = readdir(dir)) != NULL) {
+        int64_t pid;
+        if (sscanf(entry->d_name, "%ld", &pid)) ++cnt;
+    }
+    printf("%ld processes detected\n", cnt);
+    
+    closedir(dir);
+    return cnt;
 }
-REGISTER_ACTIVITY(list_processes);
+REGISTER_ACTIVITY(count_processes);
 
 static bool access_network(void) {
     return false;
@@ -101,12 +125,12 @@ REGISTER_ACTIVITY(access_network);
 int main() {
     int success = 0;
     for (int i = 0; i < num_activities; ++i) {
-        printf("=== %s start ===\n+\n", activities[i].name);
+        printf("=== %s start ===\n\n", activities[i].name);
         if (activities[i].func()) {
             ++success;
-            printf("+\n=== %s success ===\n\n", activities[i].name);
+            printf("\n=== %s success ===\n\n", activities[i].name);
         } else
-            printf("+\n=== %s fail ===\n\n", activities[i].name);
+            printf("\n=== %s fail ===\n\n", activities[i].name);
     }
     printf("\nSummary: %d succeed, %d failed\n", success, (int) num_activities - success);
 }
