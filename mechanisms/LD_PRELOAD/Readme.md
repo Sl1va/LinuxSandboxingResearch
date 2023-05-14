@@ -110,6 +110,6 @@ Summary: 3 succeed, 0 failed
 
 As a conclusion, `LD_PRELOAD` is useful `linux` mechanism which can be applied on injecting custom code into the application. But, it is ABSOLUTELY NOT APPLICABLE as a sandboxing mechanism in terms of cybersecurity because it is very easy to bypass it. `LD_PRELOAD`  is not imply being sandboxing solution, it is used in other areas. It is reasonable to refuse using `LD_PRELOAD` as a sandboxing mechanism and take a look towards other ones, such as `seccomp` and `namespaces`.
 
-<img src="../../images/negative_checkbox.svg" style="zoom:8%;" />
+<img src="../../images/negative_checkbox.svg" width="150" />
 
 # References
