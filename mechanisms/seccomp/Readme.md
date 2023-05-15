@@ -118,11 +118,44 @@ It configures `seccomp` rules and performs `execve` to the target application.
 
 ## Performance
 
-However, there are certain disadvantages to Seccomp. One of the issues that come with Seccomp is performance. Seccomp reduces a process's performance by limiting the system calls that can be made to a kernel. It is important to have an effective whitelist of system calls and then optimize the policy. The system may encounter issues when running existing applications that require newer system calls or when unexpected behavior occurs. These issues arise when the application does not run inside a sandbox and may encounter problems shifting to restricted privileges as used by Seccomp.
+In order to measure overhead created by `seccomp` we implemented simple tool which creates some `cpu` load and perform multiple system calls to create kernel space load.
+
+To build the test run:
+
+```bash
+make -C stress_app/
+```
+
+ Run the test without any wrappers in order to determine its default results:
+
+```bash
+❯ time ./stress_app/app 
+  
+real    0m40,745s
+user    0m25,644s
+sys     0m15,100s
+```
+
+As we can see test created load in userspace and kernel space.
+
+
+
+Now, let's try to run `seccomp` sandbox on this test:
+
+```bash
+❯ time ./mechanisms/seccomp/seccomp_sandbox stress_app/app 
+Seccomp activated
+
+real    0m44,535s
+user    0m25,286s
+sys     0m19,248s
+```
+
+As we can observe,  our `seccomp` sandbox absolutely did not affect userspace running performance, but due to additional checks in kernel space while performing system calls, it brought some overhead to the execution time. The overhead may vary depending on `seccomp` rules set before execution and on the number of system calls performed, but the fact that the overhead exists is obvious.
 
 ## Conclusion
 
-To sum up, Seccomp is an essential tool for application security and system hardening, and is relevant in use-cases where security is the utmost priority and optimal system performance isn't the top priority. Even with Seccomp enforced, it is still important to follow security best practices, such as avoiding the use of hardcoded credentials and making sure to patch and update the system frequently to minimize vulnerabilities.
+`Seccomp` is an essential tool for application security and system hardening, and is relevant in use-cases where security is the utmost priority and optimal system performance isn't the top priority. Even with `Seccomp` enforced, it is important to introduce additional sandboxing mechanisms such as `namespaces` and `cgroups` in order to provide full-fledged sandboxing solution.  
 
 <img src="../../images/positive_checkbox.svg" width="100" />
 
