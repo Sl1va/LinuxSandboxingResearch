@@ -49,7 +49,3 @@ These commands enable us to establish a `memory` consumption limit of `100MB` an
 Cgroups offer a significant performance advantage when utilized as a sandboxing mechanism. Their ability to finely manage and allocate resources allows administrators to set specific resource limits for processes or process groups. This level of control ensures that resource-intensive applications do not overly impact overall system performance. However, it is crucial to configure cgroups correctly to avoid overly restrictive resource limits that could potentially affect legitimate processes. Thus, careful tuning and monitoring of cgroup settings are essential to maintain a balance between resource allocation and system performance in a sandboxing environment. Cgroups, on their own, do not directly provide access control for some system components for example file access. However, they can be effectively combined with security modules like AppArmor or SELinux to enhance the overall security of the system.
 
 <img src="../../images/positive_checkbox.svg" width="150" />
-
-## References
-
-https:://www.kek.com/somearticle - Some title to article
