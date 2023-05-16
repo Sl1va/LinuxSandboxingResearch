@@ -1,7 +1,7 @@
 # Cgroups
 
 ## Review
-`Control Groups`, commonly known as `cgroups`, is a Linux kernel feature that provides resource management and allocation capabilities. It allows you to control and limit system resources such as `CPU`, `memory`, `disk I/O`, and `network bandwidth` for a group of processes or tasks. `Cgroups` enable you to create hierarchies of processes and associate them with specific resource limits and usage policies. By doing so, you can ensure that resources are fairly distributed among different processes or groups of processes, preventing one process from monopolizing the system resources.
+`Control Groups`, commonly known as `cgroups`, is a Linux kernel feature that provides resource management and allocation capabilities. It allows you to control and limit system resources such as `CPU`, `memory`, `disk I/O`, and `network bandwidth` for a group of processes or tasks. `Cgroups` allows you to create hierarchies of processes and associate them with specific resource limits and usage policies. By doing so, you can ensure that resources are fairly distributed among different processes or groups of processes, preventing one process from monopolizing the system resources.
 
 `Cgroups` can be used for various purposes, including process isolation, workload prioritization, and resource allocation in containerization technologies like Docker and Kubernetes. `Cgroups` can be used as part of a Linux sandboxing solution. While `cgroups` primarily focus on resource management and allocation, they can contribute to the overall isolation and confinement of processes or applications.
 
@@ -43,6 +43,10 @@ sudo sh -c "echo PID > /sys/fs/cgroup/memory/sandbox/tasks"
 ```
 
 These commands enable us to establish a `memory` consumption limit of `100MB` and disable `memory swappiness` using cgroups. Additionally, it is necessary to specify the Process ID (PID) of the target process that requires restriction. By executing these commands, the program's memory usage will be constrained to a maximum of `100MB`, and the system's swappiness behavior will be disabled.
+
+## Performance 
+
+When measuring the performance of the mechanism, we employed a specific methodology. We conducted measurements to assess the overhead both with and without applying the mechanism. The purpose was to evaluate the impact on system performance and gauge the effectiveness of the mechanism in managing resources. The measurement results provided valuable insights into the performance implications associated with the utilization of cgroups.
 
 ## Conclusion
 
