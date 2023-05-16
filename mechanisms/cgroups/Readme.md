@@ -18,7 +18,7 @@ We implemented simple program `excessive_usage.c` which will try to consume exce
 ```
 We should execute our program in the primary environment first to evaluate its impact on the system.
 
-<img src="./images/picture01.jpg" width="800" />
+<img src="../../images/picture01.jpg" width="800" />
 
 Based on the screenshot taken before the system froze, it is apparent that the program was utilizing `100%` of the `CPU` and `62%` of the available `memory`. To address this issue, we will now attempt to restrict the program's access to system resources by using cgroups. Let's begin by limiting the CPU usage.
 
@@ -31,7 +31,7 @@ sudo sh -c "echo PID > /sys/fs/cgroup/cpu/sandbox/tasks"
 
 These commands allow us to establish a maximum `CPU` consumption limit of `25%`. It is essential to specify the Process ID (PID) of the target process that requires restriction. Once the program is executed, we can observe that it is restricted to utilizing a maximum of `25%` of the CPU's capacity.
 
-<img src="./images/picture02.jpg" width="800" />
+<img src="../../images/picture02.jpg" width="800" />
 
 Once memory limits are established, the program will be terminated when it exceeds the defined limit. This termination occurs in accordance with the predetermined out-of-memory (OOM) killer policy.
 
