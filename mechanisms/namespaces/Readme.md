@@ -78,17 +78,102 @@ Overall, the UTS namespace is a key component in the Linux kernel's namespace fe
 
 ## Demonstration
 
+Preparations: create rootfs with necessary scripts and files. In our example UbuntuBase is used
+
+Main command is **unshare**
+
+```
+unshare - run program in new namespaces
+```
+
+with flags to isolate namespace: **unshare --mount --net -fp -R rootfs**
+
+```
+--mount - mount namespace
+--net   - network namespace
+-f      - fork process inside namespace
+-p      - PID namespace
+-R      - root directory, to isolate fs
+```
+
+Full bash script to run isolated namespace with some program
+
+```bash
+#!/bin/bash
+sudo unshare --mount --net -fp -R rootfs  /bin/bash -c '
 
 
-Some text and code examples or/and instructions. If mechanism can be violated, add examples how to violate it.
+mount -t proc proc /proc
+mount -t devtmpfs none /dev
+
+adduser myuser --disabled-password
+
+
+# Switch to the new user and run the script
+su -c ./app_static myuser '
+```
+
+Program output:
+
+```bash
+adduser: The user `myuser' already exists.
+=== read_file start ===
+
+Opened /etc/passwd
+First line of /etc/passwd:
+root:x:0:0:root:/root:/bin/bash
+
+=== read_file success ===
+
+=== count_processes start ===
+
+2 processes detected
+
+=== count_processes success ===
+
+=== access_network start ===
+
+Failed to connect
+
+=== access_network fail ===
+
+
+Summary: 2 succeed, 1 failed
+```
+
+Explanation:
+
+Network test failed because program created new network namespace but didn't setup it
+
+Read file successed because we read files from current isolated filesystems, program can delete root files, but it will not affect on any files of main system. Also we can run create namespace without root and program still can not affect any root file
+
+Only current namespace processes detected because we created PID namespace
 
 ## Performance
 
-If reasonable, measure mechanism performance and explain here methodology. Write measurement results. Interested in overhead with and without applying this mechanism.
+Application time without isolated namespace:
+
+```bash
+real    0m4,028s
+user    0m1,984s
+sys     0m2,044s
+```
+
+Inside namespace:
+
+```bash
+real    0m4.025s
+user    0m2.033s
+sys     0m1.992s
+```
+
+No performance overhead
 
 ## Conclusion
 
 Overall, Linux namespaces are a powerful tool for creating isolated environments for processes and can be used to improve security, resource management, and other aspects of system management. However, they require a good understanding of Linux system internals and can be difficult to get right, so careful consideration and planning are recommended before deploying them in production environments.
+
+<img src="../../images/positive_checkbox.svg" width="100" />
 
 ## References
 
