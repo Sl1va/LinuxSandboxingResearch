@@ -44,10 +44,6 @@ sudo sh -c "echo PID > /sys/fs/cgroup/memory/sandbox/tasks"
 
 These commands enable us to establish a `memory` consumption limit of `100MB` and disable `memory swappiness` using cgroups. Additionally, it is necessary to specify the Process ID (PID) of the target process that requires restriction. By executing these commands, the program's memory usage will be constrained to a maximum of `100MB`, and the system's swappiness behavior will be disabled.
 
-## Performance
-
-If reasonable, measure mechanism performance and explain here methodology. Write measurement results. Interested in overhead with and without applying this mechanism.
-
 ## Conclusion
 
 Cgroups offer a significant performance advantage when utilized as a sandboxing mechanism. Their ability to finely manage and allocate resources allows administrators to set specific resource limits for processes or process groups. This level of control ensures that resource-intensive applications do not overly impact overall system performance. However, it is crucial to configure cgroups correctly to avoid overly restrictive resource limits that could potentially affect legitimate processes. Thus, careful tuning and monitoring of cgroup settings are essential to maintain a balance between resource allocation and system performance in a sandboxing environment. Cgroups, on their own, do not directly provide access control for some system components for example file access. However, they can be effectively combined with security modules like AppArmor or SELinux to enhance the overall security of the system.
