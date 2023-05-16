@@ -1,15 +1,13 @@
 # Chroot
 
 ## Review
-chroot (change root) is a Unix command that allows you to change the root directory for a process and its children to a different location in the filesystem. It creates a virtualized environment where the specified directory becomes the new root directory, and any access to files and directories outside of that directory is restricted.
-
-Chroot is commonly used for sandboxing or isolating processes. By setting up a chroot environment, you can create a restricted environment in which you can execute applications or processes without risking the security or stability of the main system.
+`Chroot` is an operation that enables the current running process and its child processes to perceive a different root directory. When a program is executed within this modified environment, it is confined to accessing only the files and commands within the designated directory tree. This confinement creates a restricted environment known as a `chroot jail`, preventing access to resources outside of it.
 
 It's important to note that while chroot provides some level of isolation, it is not a foolproof security measure. It is still possible for processes to escape the chroot environment if they have vulnerabilities or if the chroot environment is not properly set up.
 
 ## Demonstration
 
-To create an isolated environment for running potentially suspicious applications, we obtain a rootfs (https://cdimage.ubuntu.com/ubuntu-base/releases/22.04/release/), which serves as the foundation. This rootfs consists of a foundational Ubuntu version that includes all the essential files needed to execute our program securely within this confined environment. We will execute a series of commands to set up the sandbox environment. 
+To create an isolated environment for running potentially suspicious applications, we obtain a `rootfs` (https://cdimage.ubuntu.com/ubuntu-base/releases/22.04/release/), which serves as the foundation. This `rootfs` consists of a foundational Ubuntu version that includes all the essential files needed to execute our program securely within this confined environment. We will execute a series of commands to set up the sandbox environment. 
 
 ```
 cp -r ./suspicious_app ~/sandbox
@@ -83,10 +81,12 @@ Summary: 3 succeed, 0 failed
 ```
 ## Performance 
 
-In order to use `chroot`, we initially set up a sandbox environment using an `Ubuntu base`, which served as the testing environment. We proceeded to test the suspicious application within this environment and obtained satisfactory results. However, we subsequently demonstrated that it is relatively simple to break out of the sandbox environment and execute the suspicious application. The results clearly indicated that we were able to successfully break out of the sandbox environment.
+In terms of performance, the `chroot` mechanism itself has minimal overhead on system resources as changing the root directory is a lightweight operation. However, the performance of applications within the chroot environment may be affected by limited access to resources outside the designated directory tree. Confinement within the `chroot jail` can restrict access to files, commands, and system resources beyond the chroot, potentially impacting application performance, particularly for those heavily reliant on external resources. Additionally, the additional steps in the provided code, such as navigating outside the chroot directory using `chdir("..")`, may introduce slight overhead due to system calls and directory traversal.
 
 ## Conclusion
 
-When evaluating the `chroot` mechanism for sandboxing purposes in terms of cybersecurity, certain conclusions can be drawn. Unfortunately, the mechanism does not provide an acceptable level of security due to its inherent vulnerabilities. The isolated environment created by chroot is relatively easy to break, making it unreliable as a robust security measure. It is important to explore alternative sandboxing solutions that offer stronger isolation and confinement capabilities to ensure a higher level of cybersecurity for protecting against potential threats.
+Considering the `chroot` mechanism for sandboxing purposes in terms of cybersecurity, we can draw certain conclusions. The mechanism, while providing some level of isolation, is not an acceptable solution for robust sandboxing due to its inherent vulnerabilities. The demonstrated ability to break out of the chroot environment using simple techniques indicates that relying solely on chroot for security is inadequate.
+
+To achieve a higher level of cybersecurity, it is essential to explore more advanced sandboxing solutions that offer stronger isolation and confinement capabilities. These solutions should be designed to mitigate the vulnerabilities associated with chroot and provide enhanced protection against potential threats.
 
 <img src="../../images/negative_checkbox.svg" width="150" />
