@@ -21,7 +21,6 @@ Each mechanism has the following sections:
 2. **Demonstration** - mechanism usage examples with code provided and testing instructions. Here techniques are tested on `suspicous_app` if applicable
 3. **Performance** - overhead measurements. Here `stress_app` is used if applicable
 4. **Conclusion** - our contemplations on technology, final verdict on applicability
-5. **References** - useful links
 
 ## Content
 
